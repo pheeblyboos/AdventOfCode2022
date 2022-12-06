@@ -37,12 +37,19 @@ namespace AdventOfCode
                     var amount = instruction[0];
                     var stackFrom = stacks[instruction[1] - 1];                    
                     var stackTo = stacks[instruction[2] - 1];
-                    
-                    while(amount > 0)
+                    var tempStack = new Stack<string>();
+
+                    while (amount > 0)
                     {
                         var item = stackFrom.Pop();
-                        stackTo.Push(item);
+                        tempStack.Push(item);
                         amount--;
+                    }
+
+                    while (tempStack.Any())
+                    {
+                        var item = tempStack.Pop();
+                        stackTo.Push(item);
                     }
                 });
 
