@@ -10,6 +10,7 @@
                         .ToList();
             var charList = new List<char>();
             var answer1 = 0;
+
             list.ForEach((set) =>
             {
                 charList = set[0].Intersect(set[1]).ToList();
@@ -31,8 +32,7 @@
             var answer2 = 0;
             groupsOfThree.ForEach((set) =>
             {
-                var substr = new List<char>();
-                substr = set[0].Intersect(set[1]).Intersect(set[2]).ToList();
+                var substr = set[0].Intersect(set[1]).Intersect(set[2]).ToList();
                 answer2 += substr[0] > 96 ? substr[0] - 96 : substr[0] - 38;
 
             });
