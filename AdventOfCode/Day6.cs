@@ -4,14 +4,11 @@
     {
         public static void Run()
         {
-            {
-                var lines = FileLoaderService.LoadFile("puzzleInputDay6");
+            
+            var lines = FileLoaderService.LoadFile("puzzleInputDay6");
 
-                GetPacketMarker(lines, 4);
-                GetPacketMarker(lines, 14);
-
-
-            }
+            GetPacketMarker(lines, 4);
+            GetPacketMarker(lines, 14);
         }
 
         private static void GetPacketMarker(string lines, int interval)
@@ -31,7 +28,6 @@
                 }
 
                 chunkStart++;
-
             }
         }
     }

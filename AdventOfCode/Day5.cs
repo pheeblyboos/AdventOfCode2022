@@ -2,11 +2,11 @@
 
 namespace AdventOfCode
 {
-    internal class Day5
+    internal static class Day5
     {
         public static void Run()
         {
-            {
+            
                 var lines = FileLoaderService.LoadFile("puzzleInputDay5");
 
                 var stacks = new List<Stack<string>>{
@@ -32,7 +32,7 @@ namespace AdventOfCode
                     )
                     .ToList();
                 
-                instructions.ToList().ForEach((instruction) =>
+                instructions.ForEach((instruction) =>
                 {
                     var amount = instruction[0];
                     var stackFrom = stacks[instruction[1] - 1];                    
@@ -55,7 +55,7 @@ namespace AdventOfCode
 
                 stacks.ForEach(x => Console.Write(x.Peek()));
                 
-            }
         }
+        
     }
 }
