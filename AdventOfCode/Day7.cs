@@ -36,7 +36,7 @@
                                 currentObject = rootObject;
                             } else
                             {
-                                currentObject = currentObject.SubObjects.First(s => s.Name == subDirectory);
+                                currentObject = currentObject.SubObjects.First(s => s.Name.EndsWith(subDirectory));
                             }
                         break;
 
@@ -83,7 +83,7 @@
                 }
                 else
                 {
-                    //var x = resultList.Remove(tempObject);
+                    var x = resultList.Remove(tempObject);
                 }
                 tempObject = tempObject.Parent;
             }
@@ -96,7 +96,22 @@
 
         private static DirectoryObject CreateDirectory(string directoryName, DirectoryObject currentObject)
         {
-            return new DirectoryObject() { Name = directoryName, Parent = currentObject, SubObjects = new List<DirectoryObject>() };
+            var name = GenerateDirectoryName(currentObject, directoryName);
+            return new DirectoryObject() { Name = name, Parent = currentObject, SubObjects = new List<DirectoryObject>() };
+        }
+
+        private static string GenerateDirectoryName(DirectoryObject currentObject, string directoryName)
+        {
+            var result = directoryName;
+            var tempObject = currentObject;
+            while(tempObject.Name != "/")
+            {
+                result = $"{tempObject.Name}/{result}";
+                tempObject = tempObject.Parent;
+
+            }
+
+            return result;
         }
     }
 
