@@ -2,24 +2,26 @@
 
 namespace AdventOfCode.Day11Lib
 {
-    internal class MonkeyFactory
+    internal static class MonkeyFactory
     {
         public static Monkey CreateMonkey(string[] lines)
         {
 
             (char operation, int number) operations = SetOperation(lines[2]);
             (int condition, string testTrue, string testFalse) test = SetTest(lines);
-            
-            var monkey = new Monkey(operations, test);
-            monkey.Name = lines[0].Replace(':', ' ').Trim();
-            monkey.ItemsHolding = new Queue<long>(lines[1].Replace("Starting items:", "").Trim().Split(',').Select(long.Parse).ToList());
+
+            var monkey = new Monkey(operations, test)
+            {
+                Name = lines[0].Replace(':', ' ').Trim(),
+                ItemsHolding = new Queue<long>(lines[1].Replace("Starting items:", "").Trim().Split(',').Select(long.Parse).ToList())
+            };
 
             return monkey;
         }
 
         private static (int condition, string testTrue, string testFalse) SetTest(string[] lines)
         {
-            Regex regex = new Regex(@"\d+$");
+            var regex = new Regex(@"\d+$");
             var result = lines.Skip(3)
                 .Select(x => int.Parse(regex.Match(x).Value)).ToList();
             return (result[0], $"Monkey {result[1]}", $"Monkey {result[2]}");
