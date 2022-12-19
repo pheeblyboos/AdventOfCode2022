@@ -6,7 +6,7 @@
         {
             //var input = Console.ReadLine();
 
-            switch ("13")
+            switch ("17")
             {
                 case "1":
                     Day1.Run();
@@ -47,18 +47,18 @@
                 case "13":
                     Day13.Run();
                     break;
-                //case "14":
-                //    Day14.Run();
-                //    break;
-                //case "15":
-                //    Day15.Run();
-                //    break;
-                //case "16":
-                //    Day16.Run();
-                //    break;
-                //case "17":
-                //    Day17.Run();
-                //    break;
+                case "14":
+                    Day14.Run();
+                    break;
+                case "15":
+                    Day15.Run();
+                    break;
+                case "16":
+                    Day16.Run();
+                    break;
+                case "17":
+                    Day17.Run();
+                    break;
                 //case "18":
                 //    Day18.Run();
                 //    break;
