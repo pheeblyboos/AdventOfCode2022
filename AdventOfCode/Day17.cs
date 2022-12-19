@@ -8,32 +8,30 @@ namespace AdventOfCode
         {
             var lines = FileLoaderService.LoadFile("puzzleInputDay17");
             var grid = new Grid();
-
-            for (int i = 0; i < lines.Length; i++)
+            var counter = 0;
+            while(grid.RockCounter < 2023)
             {
-               
-                //if (grid.CurrentRock.HasCollision())
-                //{
-                //    // if the rock is hitting another rock or the floor, stop moving and select the next rock
-                //    //get next rock shape
-
-                //    grid.MakeSpace();
-                //    //var rock = grid.GetNextRock(i);
-                    
-                //}
-                grid.Draw();
-                grid.BlowJet(lines[i]);
-                grid.Draw();
+                grid.BlowJet(lines[counter]);
                 var isAtBottom = grid.MoveDown();
-                grid.Draw();
+                
+
                 if (isAtBottom)
                 {
+                    if (grid.RockCounter >= 2023) break;
                     grid.NextActiveRock();
                 }
-                //execute direction
-                // draw rock
-                //move down
+
+                if (counter >= lines.Length - 1)
+                {
+                    counter = 0;
+                }
+                else
+                {
+                    counter++;
+                }
             }
+            grid.Draw();
+            Console.WriteLine("done");
         }
     }
 }

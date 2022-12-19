@@ -6,7 +6,8 @@
         public List<(int x, int y)> RockShape { get; set; }
         public int Y { get; set; }
         public int X { get; set; } = DEFAULT_OFFSET;
-        
+        public char Material { get; set; } = '@';
+
         public Rock(RockType rockType)
         {
             RockShape = GenerateRockShape(rockType);
@@ -34,6 +35,11 @@
         internal int GetLength()
         {
             return RockShape.Select((r) => r.y).Distinct().Count();
+        }
+
+        internal int GetWidth()
+        {
+            return RockShape.Select((r) => r.x).Distinct().Count();
         }
     }
 }

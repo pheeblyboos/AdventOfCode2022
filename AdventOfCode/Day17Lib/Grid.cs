@@ -10,7 +10,8 @@
         public List<List<char>> GridField { get; set; }
         public Rock CurrentRock { get; set; }
         public List<Rock> OldRocks { get; set; }
-        public int RockCounter { get; set; } = 3;
+        public int RockCounter { get; set; } = 0;
+
 
         public Grid()
         {
@@ -18,8 +19,8 @@
             
             CurrentRock = Rock.GetNextRock(RockCounter);
             GridField.Add(GenerateFloor());
-            MakeSpace(CurrentRock.RockShape.Count + DEFAULT_EXTRA_ROWS, 0);
-            InsertRock('@');
+            MakeSpace(CurrentRock.GetLength() + DEFAULT_EXTRA_ROWS, 0);
+            InsertRock();
 
         }
 
@@ -27,8 +28,7 @@
         {
             RockCounter++;
             CurrentRock = Rock.GetNextRock(RockCounter);
-            MakeSpace(CurrentRock.GetLength(), 1);
-            CurrentRock.Y = 1;
+            MakeSpace(CurrentRock.GetLength() + DEFAULT_EXTRA_ROWS, 0);
             CurrentRock.X = DEFAULT_OFFSET;
         }
             
@@ -37,13 +37,13 @@
         /// Inserts a rock at the specified offset from the left
         /// </summary>
         /// <param name="offset"></param>
-        private void InsertRock(char sprite)
+        private void InsertRock()
         {
             for (int i = 0; i < CurrentRock.RockShape.Count; i++)
             {
                 var gridRowOffset = CurrentRock.RockShape[i].y + CurrentRock.Y;
                 var gridColOffset = CurrentRock.RockShape[i].x + CurrentRock.X;
-                GridField[gridRowOffset][gridColOffset] = sprite;
+                GridField[gridRowOffset][gridColOffset] = CurrentRock.Material;
                 
             }
         }
@@ -85,20 +85,24 @@
                 ClearGrid();
                 MoveRock(CurrentRock, direction);
             }
-            InsertRock('@');
+            InsertRock();
         }
 
         internal bool MoveDown()
         {
             var hasCollision = HasCollision(Direction.Down);
             // if there is no down collision, move the rock
-            var rockSprite = hasCollision ? '#' : '@';
+            
             if (!hasCollision)
             {
                 ClearGrid();
                 MoveRock(CurrentRock, Direction.Down);
+                RemoveTop();
+            } else
+            {
+                CurrentRock.Material = '#';
             }
-            InsertRock(rockSprite);
+            InsertRock();
             return hasCollision;
         }
 
@@ -126,6 +130,11 @@
             }
         }
 
+        public void RemoveTop()
+        {
+            GridField.RemoveAt(0);
+        }
+
         private void MoveRock(Rock rock, Direction direction)
         {
             switch (direction)
@@ -140,7 +149,7 @@
                     rock.Y--;
                     break;
                 case Direction.Down:
-                    rock.Y++;
+                    //rock.Y;
                     break;
             }
         }
@@ -163,10 +172,10 @@
 
         private bool CheckCols(Direction direction)
         {
-            var dir = direction == Direction.Left ? DEFAULT_OFFSET - 1 : DEFAULT_OFFSET + 1;
+            var dir = direction == Direction.Left ? 0 : CurrentRock.GetWidth() + 1;
             var result = true;
             var nextLocationX = (CurrentRock.X + dir);
-            if (nextLocationX > MIN_FIELD_WIDTH && nextLocationX <= MAX_FIELD_WIDTH)
+            if (nextLocationX > 1 && nextLocationX <= MAX_FIELD_WIDTH && GridField[CurrentRock.Y + CurrentRock.GetLength() - 1][CurrentRock.X + dir - 1] != '#')
             {
                 result = false;
             }
@@ -179,7 +188,8 @@
             var result = true;
             var nextLocationY = (CurrentRock.Y + CurrentRock.GetLength());
             var oneAboveFloorY = GridField.Count - 1; // Not super clear, but essentially we have a floor row on line 7 so the bottom is one above otherwise we remove the floor.
-            if (nextLocationY < oneAboveFloorY)
+        
+            if (nextLocationY < oneAboveFloorY && !CollisionLowestRow(nextLocationY))
             {
                 result = false;
             }
@@ -187,6 +197,22 @@
             return result;
         }
 
-
+        private bool CollisionLowestRow(int nextLocationY)
+        {
+            // Check for all the @ in the bottom row of the shape, whether it overlaps with a # or not
+            var result = false;
+            var maxValue = CurrentRock.RockShape.Max(c => c.y);
+            var bottomShapeRow = CurrentRock.RockShape.Where(c => c.y == maxValue).ToList();
+            for (int i = 0; i < bottomShapeRow.Count; i++)
+            {
+                if (GridField[nextLocationY][CurrentRock.X + bottomShapeRow[i].x] == '#')
+                {
+                    result = true;
+                    break;
+                }
+            }
+            //return GridField[nextLocationY][CurrentRock.X + (CurrentRock.GetWidth() - 1)] != '#';
+            return result;
+        }
     }
 }
