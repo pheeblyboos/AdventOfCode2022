@@ -112,9 +112,18 @@
         /// <exception cref="NotImplementedException"></exception>
         private void ClearGrid()
         {
-            var shapeCountY = CurrentRock.RockShape.Select((x) => x.y).Distinct().Count();
-            GridField.RemoveRange(CurrentRock.Y, shapeCountY);
-            MakeSpace(shapeCountY, 0);
+            //var shapeCountY = CurrentRock.RockShape.Select((x) => x.y).Distinct().Count();
+            var shapeCountY = CurrentRock.Y + CurrentRock.GetLength();
+            for (int i = CurrentRock.Y; i < shapeCountY; i++)
+            {
+                for (int j = 0; j < GridField[i].Count; j++)
+                {
+                    if (GridField[i][j] == '@')
+                    {
+                        GridField[i][j] = '.';
+                    }
+                }
+            }
         }
 
         internal void Draw()
@@ -172,15 +181,36 @@
 
         private bool CheckCols(Direction direction)
         {
-            var dir = direction == Direction.Left ? 0 : CurrentRock.GetWidth() + 1;
+            var dir = direction == Direction.Left ? -1 : 1;
             var result = true;
             var nextLocationX = (CurrentRock.X + dir);
-            if (nextLocationX > 1 && nextLocationX <= MAX_FIELD_WIDTH && GridField[CurrentRock.Y + CurrentRock.GetLength() - 1][CurrentRock.X + dir - 1] != '#')
+            if (nextLocationX >= 1 && nextLocationX + CurrentRock.GetWidth() <= MAX_FIELD_WIDTH && !CollisionSides(nextLocationX, dir))
             {
                 result = false;
             }
 
             return result;
+        }
+
+        private bool CollisionSides(int nextLocationX, int dir)
+        {
+            var result = false;
+            var sideRow = CurrentRock.RockShape.GroupBy(x => x.y).Select(x => x.First(r => r.x == SelectSide(x, dir))).ToList();
+            for (int i = 0; i < sideRow.Count; i++)
+            {
+                if (GridField[CurrentRock.Y + sideRow[i].y][nextLocationX + sideRow[i].x] == '#')
+                {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+            //return GridField[CurrentRock.Y + CurrentRock.GetLength() - 1][nextLocationX - 1] != '#';
+        }
+
+        private static int SelectSide(IGrouping<int, (int x, int y)> x, int dir)
+        {
+            return dir == -1 ? x.Min(r => r.x) : x.Max(r => r.x);
         }
 
         private bool CheckRows()
@@ -201,8 +231,7 @@
         {
             // Check for all the @ in the bottom row of the shape, whether it overlaps with a # or not
             var result = false;
-            var maxValue = CurrentRock.RockShape.Max(c => c.y);
-            var bottomShapeRow = CurrentRock.RockShape.Where(c => c.y == maxValue).ToList();
+            var bottomShapeRow = CurrentRock.RockShape.GroupBy(x => x.x).Select(x => x.First(r => r.y == x.Max(c => c.y))).ToList();
             for (int i = 0; i < bottomShapeRow.Count; i++)
             {
                 if (GridField[nextLocationY][CurrentRock.X + bottomShapeRow[i].x] == '#')

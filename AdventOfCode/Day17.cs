@@ -31,6 +31,7 @@ namespace AdventOfCode
                 }
             }
             grid.Draw();
+            var answer1 = grid.GridField.Count(x => x.Contains('#'));
             Console.WriteLine("done");
         }
     }
