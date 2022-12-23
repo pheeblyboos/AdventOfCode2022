@@ -9,18 +9,17 @@ namespace AdventOfCode
             var lines = FileLoaderService.LoadFile("puzzleInputDay17");
             var grid = new Grid();
             var counter = 0;
-            while(grid.RockCounter < 2023)
+            var isAtBottom = false;
+            while (grid.RockCounter < 2022)
             {
                 grid.BlowJet(lines[counter]);
-                var isAtBottom = grid.MoveDown();
                 
-
+                isAtBottom = grid.MoveDown();
                 if (isAtBottom)
                 {
-                    if (grid.RockCounter >= 2023) break;
+                    if (grid.RockCounter >= 2022) break;
                     grid.NextActiveRock();
                 }
-
                 if (counter >= lines.Length - 1)
                 {
                     counter = 0;
@@ -30,8 +29,9 @@ namespace AdventOfCode
                     counter++;
                 }
             }
-            grid.Draw();
             var answer1 = grid.GridField.Count(x => x.Contains('#'));
+            Console.WriteLine(answer1);
+            grid.Draw();
             Console.WriteLine("done");
         }
     }

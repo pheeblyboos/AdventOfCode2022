@@ -26,7 +26,7 @@
             };
         }
 
-        public static Rock GetNextRock(int index)
+        public static Rock GetNextRock(long index)
         {
             var rockType = (RockType)(index % 5);
             return new Rock(rockType);
